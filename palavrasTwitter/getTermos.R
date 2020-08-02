@@ -26,7 +26,8 @@ resultados <- data.frame(text = character(),
 
 for(i in c(1:length(coleta$semana[[1]]))){
   termo <-  coleta$semana[[1]][i]
-  search <- search_tweets(termo, n = 9000, include_rts = FALSE)
+  message(termo)
+  search <- search_tweets(termo, n = 6000, include_rts = FALSE)
   search <- data.frame(text = search$text, 
                        screen_name = search$screen_name, 
                        status_id = search$status_id, 

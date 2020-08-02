@@ -10,4 +10,4 @@ client = gspread.authorize(credentials)
 with open("busca_por_palavras.csv","r", encoding='utf-8') as resultado:
 	palavras= pd.read_csv(resultado)
 	palavras_covid = client.open_by_key("1gEu954wNAQSVgjWROktRjtDDqDJZ__VSdzRBcebb0hw").sheet1
-	palavras_covid.update([palavras.columns.values.tolist()] + palavras.values.tolist())
+	palavras_covid.append_rows(palavras.values.tolist())
