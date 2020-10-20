@@ -1,0 +1,134 @@
+---
+title: "Rio em dados"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+library(dplyr)
+library(readr)
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### Casos confirmados
+
+```{r}
+casos <- "1.357.890"
+valueBox(casos, icon = "fa-user-md")
+```
+
+### Óbitos confirmados
+
+```{r}
+obitos <- "135.609"
+valueBox(obitos, icon = "fa-ambulance")
+```
+
+### Hospitais de campanha ativos
+
+```{r}
+spam <- "60"
+valueBox(spam, 
+         icon = "fa-user",
+         color = ifelse(spam > 10, "warning", "primary"))
+```
+
+
+### Casos na semana
+
+```{r}
+casos <- "78.871"
+valueBox(casos, icon = "fa-user-md")
+```
+
+
+### óbitos na semana
+
+```{r}
+casos <- "10.765"
+valueBox(casos, icon = "fa-ambulance")
+```
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Palavras mais usadas no Twitter
+
+```{r}
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+library(readr)
+library(stringr)
+
+ttpalavras6 <- read_csv("noticias_semanais.csv")
+ttpalavras <- ttpalavras6$text
+
+palavras <- read.table("palavrasTwitter/palavras.txt", encoding="UTF-8", quote="\"", comment.char="")
+stop     <- unique(c(as.character(palavras$V1),stopwords("portuguese")))
+
+# AUTOR: Rafael Cabral Fernandêz
+limpinho <- function(x){
+  
+  options(warn = -1)  
+  
+  x = gsub("https\\S*", "",                   x) 
+  x = gsub("@\\S*", "",                       x) 
+  x = gsub("amp", "",                         x) 
+  x = gsub("[\r\n]", "",                      x)
+  x = gsub("[[:punct:]]", "",                 x)
+  x = gsub("[^[:graph:]]", " ",               x)
+  x = gsub("&amp", "",                        x)
+  x = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", x)
+  x = gsub("@\\w+", "",                       x)
+  x = gsub("[[:digit:]]", "",                 x)
+  x = gsub("http\\w+", "",                    x)
+  x = gsub("^\\s+|\\s+$", "",                 x)
+  x = str_to_lower(x)
+  x = Corpus(VectorSource(x))
+  x = tm_map(x, removeNumbers)
+  x = tm_map(x, removePunctuation)
+  x = tm_map(x, stripWhitespace)
+  x = tm_map(x, removeWords, stop)
+  
+  return(x)
+  
+}
+ttpalavras <- limpinho(ttpalavras)
+
+dtm <- TermDocumentMatrix(ttpalavras)
+dtm <- as.matrix(dtm)
+
+word_freqs  <- sort(rowSums(dtm),decreasing=TRUE) 
+dm = data.frame(word=names(word_freqs), freq=word_freqs)
+
+library(wordcloud2)
+wordcloud2(data = dm)
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
