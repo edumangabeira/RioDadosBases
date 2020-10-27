@@ -6,6 +6,9 @@ output:
     vertical_layout: fill
 ---
 
+Saúde
+===
+
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(tm)
@@ -59,6 +62,8 @@ valueBox(casos, icon = "fa-ambulance")
 ```
 
 
+Social
+===
 
 Column {data-width=650}
 -----------------------------------------------------------------------
@@ -114,21 +119,13 @@ word_freqs  <- sort(rowSums(dtm),decreasing=TRUE)
 dm = data.frame(word=names(word_freqs), freq=word_freqs)
 
 library(wordcloud2)
-wordcloud2(data = dm)
-
+wordcloud <- wordcloud2(data = dm)
+library("htmlwidgets")
+saveWidget(wordcloud,"tmp.html",selfcontained = F)
+webshot("tmp.html","twitter_semana.png", delay =5, vwidth = 480, vheight=480)
 ```
 
-Column {data-width=350}
+
+
+Column {data-width=650}
 -----------------------------------------------------------------------
-
-### Chart B
-
-```{r}
-
-```
-
-### Chart C
-
-```{r}
-
-```
