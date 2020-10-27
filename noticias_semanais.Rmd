@@ -1,0 +1,51 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(rtweet)
+library(readr)
+library(dplyr)
+```
+
+A função get_timeline() tem um erro que é resolvido ao declarar explicitamente o token, por isso o objeto tw_token é criado toda vez. Mas nem sempre ele é necessário, pode ser que no seu computador tudo funcione normalmente. Basta substituir suas credenciais nos campos abaixo.
+
+```{r}
+tw_token <-
+  rtweet::create_token(
+    app = "",
+    consumer_key = "",
+    consumer_secret = "",
+    access_token = "",
+    access_secret = ""
+  )
+```
+
+Foram escolhidos os jornais de maior circulação nacional e outros veículos de comunicação com grande alcance no twitter.
+
+```{r}
+jornais <- c("g1","folha","Estadao","em_com","correio","atarde","opovoonline","valoreconomico","UOLNoticias","CNNBrasil")
+
+noticias_semanais <- data.frame(text=character(), 
+                       screen_name=character(), 
+                       status_id=character(), 
+                       created_at=as.Date(character()))
+```
+
+n = 127 é uma boa estimativa para 7 dias de publicações, por isso foi escolhido.
+
+```{r}
+timeline <- get_timeline(jornais, n=127, token = tw_token)
+timeline_jornal <-  timeline %>% 
+  select(text, screen_name, status_id, created_at)
+noticias_semanais <- bind_rows(noticias_semanais, timeline_jornal)
+
+write_csv(noticias_semanais, "noticias_semanais.csv")
+
+library(readr)
+noticias_semanais <- read_csv("noticias_semanais.csv")
+
+```
+
